@@ -48,12 +48,8 @@ jobs:
       - run: npm pack --dry-run
 
       - name: Stage the release on npm
-        # a maintainer approves every version with 2FA at npmjs.com → Staged Packages.
-        # Trusted publishing (OIDC) is used once it is configured; for the very first version
-        # (the package does not exist yet) npm falls back to the temporary NPM_BOOTSTRAP_TOKEN
-        # secret – delete it right after 0.1.0 is approved. See PUBLISHING.md.
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_BOOTSTRAP_TOKEN }}
+        # trusted publishing (OIDC): no npm token anywhere. A maintainer approves every version
+        # with 2FA at npmjs.com → Staged Packages. See PUBLISHING.md.
         run: |
           VERSION=$(node -p "require('./package.json').version")
           TAG=latest
