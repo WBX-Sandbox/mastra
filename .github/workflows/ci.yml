@@ -1,0 +1,65 @@
+# Build and unit tests on every push and pull request; once a week also against the newest
+# @mastra/core (1.x and anything newer), so a breaking Mastra release is noticed early.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "17 5 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [22, 24]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm pack --dry-run
+
+  mastra-latest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Newest @mastra/core
+        run: |
+          LATEST=$(npm view @mastra/core version)
+          echo "::notice::testing against @mastra/core $LATEST"
+          case "$LATEST" in 1.*) ;; *) echo "::warning::@mastra/core $LATEST is a new major version – check the peer dependency range";; esac
+          npm install --no-save "@mastra/core@$LATEST"
+      - run: npm test
+
+  live:
+    # real sandboxes; runs only when the repository has the secret (never on pull requests from forks)
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    env:
+      WBXSANDBOX_API_KEY: ${{ secrets.WBXSANDBOX_API_KEY }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Live tests
+        if: env.WBXSANDBOX_API_KEY != ''
+        run: npm run test:live
