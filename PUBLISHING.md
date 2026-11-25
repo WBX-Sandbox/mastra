@@ -11,28 +11,11 @@ anywhere; every version is approved with 2FA on npmjs.com.
 Create the public repository `WBX-Sandbox/mastra` and push this directory as its root (`main`).
 Settings → Environments → **New environment** `npm` (optionally with required reviewers).
 
-### 2. First publication (version 0.1.0 – the package must exist before a trusted publisher can be added)
+### 2. First publication (done – 0.1.0, 25 Nov 2026)
 
-**Option A – in the browser, with a temporary token (no Node.js needed):**
-
-1. npmjs.com → your avatar → **Access Tokens → Generate New Token → Granular Access Token**:
-   name `mastra-bootstrap`, expiration **7 days**, **Packages and scopes: Read and write**,
-   scope **All packages** (the package does not exist yet), Generate, copy the token.
-2. GitHub → `WBX-Sandbox/mastra` → **Settings → Secrets and variables → Actions → New repository
-   secret**: name **`NPM_BOOTSTRAP_TOKEN`**, value = the token.
-3. Publish the GitHub release `v0.1.0` (see [Every release](#every-release)). The workflow stages
-   the version with the token (`npm stage publish` can create a new package).
-4. npmjs.com → **Staged Packages** → `@wbx-sandbox/mastra` → **Approve** (2FA).
-5. Right after it is public: **delete the secret** in GitHub and **the token** on npmjs.com.
-
-**Option B – from a computer with Node.js 22.13+:**
-
-```sh
-git clone https://github.com/WBX-Sandbox/mastra && cd mastra
-npm ci && npm test
-npm login            # npm account that owns the wbx-sandbox scope, confirm with 2FA
-npm publish --access public
-```
+A trusted publisher can be added only to a package that already exists, so 0.1.0 was staged once
+with a temporary granular token (GitHub secret `NPM_BOOTSTRAP_TOKEN`, 7 days). Both the secret and
+the token were deleted right after the approval; the workflow no longer reads any token.
 
 ### 3. Trusted publisher (npmjs.com)
 
@@ -43,7 +26,8 @@ npm publish --access public
 - Workflow filename: `release.yml`
 - Environment name: `npm`
 
-Save (2FA). Same page, **Publishing access**: "Require two-factor authentication and disallow tokens".
+Save (2FA). A new trusted publisher is *pending validation* until a release is published through it
+(within 48 hours), otherwise it has to be added again. Same page, **Publishing access**: "Require two-factor authentication and disallow tokens".
 
 ## Every release
 

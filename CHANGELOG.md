@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.1] – 2026-11-25
+
+- Releases are published only through npm trusted publishing (OIDC, staged); the temporary
+  bootstrap token used for the very first version is gone from the release workflow.
+- No code changes.
+
 ## [0.1.0] – 2026-11-25
 
 First release: WBX Sandbox as a Mastra workspace sandbox.

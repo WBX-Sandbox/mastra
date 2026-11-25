@@ -1,6 +1,6 @@
 {
   "name": "@wbx-sandbox/mastra",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "WBX Sandbox provider for Mastra workspaces – isolated Firecracker microVMs in Europe for your agents",
   "license": "MIT",
   "author": "WBX Sandbox",
